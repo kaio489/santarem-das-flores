@@ -1205,6 +1205,7 @@ html.sp-lock, html.sp-lock body { overflow: hidden !important; }
     g.shadowColor = 'rgba(20,0,5,.55)'; g.shadowBlur = len * .18; g.shadowOffsetY = len * .05; g.fillStyle = gr; g.fill();
     g.shadowColor = 'transparent'; g.shadowBlur = 0; g.shadowOffsetY = 0;
     g.save(); g.clip();
+    g.strokeStyle = hsl(h, s + 10, l + 22, .2); g.lineWidth = len * .14; g.stroke();
     var sg = g.createLinearGradient(-w, 0, w, 0); sg.addColorStop(0, 'rgba(0,0,0,.28)'); sg.addColorStop(.4, 'rgba(255,255,255,.1)'); sg.addColorStop(.7, 'rgba(0,0,0,0)'); sg.addColorStop(1, 'rgba(0,0,0,.3)');
     g.fillStyle = sg; g.fillRect(-w * 1.2, -len * 1.1, w * 2.4, len * 1.2);
     g.strokeStyle = hsl(h, s, l - 18, .22); g.lineWidth = M.max(.6, len * .012);
@@ -1226,6 +1227,12 @@ html.sp-lock, html.sp-lock body { overflow: hidden !important; }
     var co = g.createRadialGradient(x, y, 0, x, y, r * .3); co.addColorStop(0, 'rgba(25,0,8,.55)'); co.addColorStop(1, 'rgba(25,0,8,0)'); g.fillStyle = co; g.fillRect(x - r, y - r, r * 2, r * 2);
     var sh = g.createRadialGradient(x - r * .4, y - r * .45, r * .05, x, y, r * 1.1); sh.addColorStop(0, 'rgba(255,240,235,.26)'); sh.addColorStop(.5, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,0,.5)');
     g.fillStyle = sh; g.fillRect(x - r, y - r, r * 2, r * 2); g.restore();
+    for (k = 0; k < 8; k++) {
+      a = R() * TAU; d = r * (.2 + R() * .6); var dx = x + M.cos(a) * d, dy = y + M.sin(a) * d, q = r * (.022 + R() * .03);
+      g.fillStyle = 'rgba(30,0,10,.35)'; g.beginPath(); g.ellipse(dx + q * .3, dy + q * .5, q, q * .9, 0, 0, TAU); g.fill();
+      var dg = g.createRadialGradient(dx - q * .3, dy - q * .35, 0, dx, dy, q); dg.addColorStop(0, 'rgba(255,255,255,.95)'); dg.addColorStop(.35, 'rgba(255,235,240,.35)'); dg.addColorStop(1, 'rgba(255,200,215,.1)');
+      g.fillStyle = dg; g.beginPath(); g.arc(dx, dy, q, 0, TAU); g.fill();
+    }
   }
   /* girassol: 3 coroas de pétalas e miolo com sementes em espiral */
   function sun(g, x, y, r) {
@@ -1286,7 +1293,7 @@ html.sp-lock, html.sp-lock body { overflow: hidden !important; }
   var PE = [[350, 75, 50], [345, 70, 70], [40, 40, 92], [355, 80, 38], [12, 80, 62]].map(function (cl) { return spr(function (g, m) { petal(g, m, m * 1.5, 0, m * .34, m * 1.3, cl[0], cl[1], cl[2], .6); }, 120); });
   var SK = spr(function (g, m) { var r = g.createRadialGradient(m, m, 0, m, m, m); r.addColorStop(0, '#fff6d0'); r.addColorStop(.3, 'rgba(240,200,110,.9)'); r.addColorStop(1, 'rgba(240,200,110,0)'); g.fillStyle = r; g.fillRect(0, 0, m * 2, m * 2); }, 48);
 
-  var PT = [], OX = W / 2, OY = H * .41, B = 1900, D = 5600, SPL = [];
+  var PT = [], OX = W / 2, OY = H * .41, B = 750, D = 2200, SPL = [];
   function P(s, base, V, k, vz, G, life, dl, kind) { return { s: s, base: base, V: V, k: k, vz: vz, G: G, life: life, dl: dl, kind: kind, an: R() * TAU, r0: R() * TAU, sp: (R() - .5) * (kind === 2 ? 9 : 5), ph: R() * TAU, hold: .9 + R() * .3, hit: 0 }; }
   function pick(a) { return a[M.floor(R() * a.length)]; }
   for (i = 0; i < 36; i++) PT.push(P(pick(FL), mn * (.14 + R() * .14), L * (.9 + R() * .9), 2.6, .3 + R() * 1.2, H * (.7 + R() * .6), 2.4 + R() * .8, R() * .08, 0));
@@ -1303,58 +1310,68 @@ html.sp-lock, html.sp-lock body { overflow: hidden !important; }
   var bk = mk(64, 64), bkg = bk.getContext('2d'), bkr = bkg.createRadialGradient(32, 32, 0, 32, 32, 32); bkr.addColorStop(0, 'rgba(255,225,150,.35)'); bkr.addColorStop(.8, 'rgba(255,225,150,.55)'); bkr.addColorStop(1, 'rgba(255,225,150,0)'); bkg.fillStyle = bkr; bkg.fillRect(0, 0, 64, 64);
   var BK = []; for (i = 0; i < 14; i++) BK.push({ x: R() * W, y: R() * H, s: 18 + R() * 60, sp: .3 + R() * .7, a: .1 + R() * .25 });
   var bs = M.min(W * .92 / BW, H * .6 / BH);
+  var nc = mk(128, 128), ng = nc.getContext('2d'), nd = ng.createImageData(128, 128), gp;
+  for (i = 0; i < nd.data.length; i += 4) { nd.data[i] = nd.data[i + 1] = nd.data[i + 2] = R() * 255; nd.data[i + 3] = 255; }
+  ng.putImageData(nd, 0, 0); gp = c.createPattern(nc, 'repeat');
 
   /* ---------- LOOP ---------- */
   var t0 = performance.now(), last = t0, trauma = 0, flashA = 0, went = false, fading = false, shown = false;
   function dp(o, tt) {
-    var tau = tt - o.dl; if (tau <= 0 || tau > o.life) return;
-    var u = (1 - M.exp(-o.k * tau)) / o.k, d = M.max(.1, 1 - o.vz * u), s = 1 / d, tg = o.kind === 4 ? M.max(0, tau - o.hold) : tau;
-    var X = M.cos(o.an) * o.V * u, Y = M.sin(o.an) * o.V * u + .5 * o.G * tg * tg; if (o.kind === 2) X += M.sin(tau * 3 + o.ph) * 26;
-    var x = OX + X * s, y = OY + Y * s, z = o.base * s; if (x < -z || x > W + z || y > H + z) return;
-    if (o.kind === 4 && !o.hit && tau >= .3) { o.hit = 1; trauma = M.min(1, trauma + .3 + R() * .15); flashA = M.max(flashA, .22); SPL.push({ x: x, y: y, z: z, t: tt }); }
-    var al = M.min(1, tau * 14) * M.min(1, (o.life - tau) / .4), sy = o.kind === 2 ? .3 + .7 * M.abs(M.cos(tau * 5 + o.ph)) : .82 + .18 * M.cos(tau * 2.2 + o.ph);
-    if (o.kind === 3) { al *= .5 + .5 * M.sin(tau * 14 + o.ph); c.globalCompositeOperation = 'lighter'; }
-    c.globalAlpha = al; c.save(); c.translate(x, y); c.rotate(o.r0 + o.sp * u + (o.kind === 2 ? M.sin(tau * 4 + o.ph) * .5 : 0)); c.scale(1, sy);
-    c.drawImage((d < .5 || z > mn * .5) && o.s.bl ? o.s.bl : o.s, -z / 2, -z / 2, z, z); c.restore(); c.globalCompositeOperation = 'source-over';
+    var t0_ = tt - o.dl; if (t0_ <= 0 || t0_ > o.life) return;
+    var gh = (o.kind === 3 || t0_ > .5) ? 0 : 2, gi, tau, u, d, s, tg, X, Y, x, y, z, al, sy, im;
+    for (gi = gh; gi >= 0; gi--) {
+      tau = t0_ - gi * .03; if (tau <= 0) continue;
+      u = (1 - M.exp(-o.k * tau)) / o.k; d = M.max(.1, 1 - o.vz * u); s = 1 / d; tg = o.kind === 4 ? M.max(0, tau - o.hold) : tau;
+      X = M.cos(o.an) * o.V * u; Y = M.sin(o.an) * o.V * u + .5 * o.G * tg * tg; if (o.kind === 2) X += M.sin(tau * 3 + o.ph) * 26;
+      x = OX + X * s; y = OY + Y * s; z = o.base * s; if (x < -z || x > W + z || y > H + z) continue;
+      if (!gi && o.kind === 4 && !o.hit && tau >= .3) { o.hit = 1; trauma = M.min(1, trauma + .3 + R() * .15); flashA = M.max(flashA, .22); SPL.push({ x: x, y: y, z: z, t: tt }); }
+      al = M.min(1, tau * 14) * M.min(1, (o.life - tau) / .4) * (gi ? .2 : 1); sy = o.kind === 2 ? .3 + .7 * M.abs(M.cos(tau * 5 + o.ph)) : .82 + .18 * M.cos(tau * 2.2 + o.ph);
+      if (o.kind === 3) { al *= .5 + .5 * M.sin(tau * 14 + o.ph); c.globalCompositeOperation = 'lighter'; }
+      im = ((d < .5 || z > mn * .5 || gi) && o.s.bl) ? o.s.bl : o.s;
+      c.globalAlpha = al; c.save(); c.translate(x, y); c.rotate(o.r0 + o.sp * u + (o.kind === 2 ? M.sin(tau * 4 + o.ph) * .5 : 0)); c.scale(1, sy);
+      c.drawImage(im, -z / 2, -z / 2, z, z); c.restore(); c.globalCompositeOperation = 'source-over';
+    }
   }
   function frame(now) {
-    var t = now - t0, dt = M.min(.05, (now - last) / 1000), ts = t / 1000, tt = (t - B) / 1000, j, q, e, gr; last = now;
+    var t = now - t0, dt = M.min(.05, (now - last) / 1000), ts = t / 1000, tt = (t - B) / 1000, tp = tt * 2, j, q, e, gr; last = now;
     if (t >= D) return end();
-    if (t >= D - 350 && !fading) { fading = true; sp.classList.add('out'); }
-    var tre = t < B ? M.max(0, (t - 1000) / (B - 1000)) * .28 : 0;
+    if (t >= D - 300 && !fading) { fading = true; sp.classList.add('out'); }
+    var tre = t < B ? M.max(0, (t - 300) / (B - 300)) * .28 : 0;
     if (t >= B && !went) { went = true; trauma = 1; flashA = 1; }
-    if (t >= B + 1500 && !shown) { shown = true; sp.classList.add('go'); }
-    trauma = M.max(0, trauma - dt * .85); flashA = M.max(0, flashA - dt * 3.2);
-    var sk = M.pow(M.max(trauma, tre), 2), sx = sk * 34 * sn(ts, 36), sy = sk * 28 * sn(ts + 7, 43), sr = sk * 2.4 * sn(ts + 3, 31);
+    if (t >= B + 450 && !shown) { shown = true; sp.classList.add('go'); }
+    trauma = M.max(0, trauma - dt * 1.5); flashA = M.max(0, flashA - dt * 5);
+    var sk = M.pow(M.max(trauma, tre), 2), sx = sk * 34 * sn(ts, 52), sy = sk * 28 * sn(ts + 7, 61), sr = sk * 2.4 * sn(ts + 3, 47);
     cv.style.translate = sx + 'px ' + sy + 'px'; cv.style.rotate = sr + 'deg'; cv.style.scale = 1.08; lg.style.translate = sx * .5 + 'px ' + sy * .5 + 'px';
     c.globalAlpha = 1; c.drawImage(bgc, 0, 0, W, H);
     c.globalCompositeOperation = 'lighter';
     for (j = 0; j < BK.length; j++) { q = BK[j]; c.globalAlpha = q.a; c.drawImage(bk, q.x, ((q.y - ts * 18 * q.sp) % H + H) % H, q.s, q.s); }
-    var rb = .05 + (t >= B ? .12 * M.max(0, 1 - tt / 1.5) : 0);
+    var rb = .05 + (t >= B ? .12 * M.max(0, 1 - tt / .8) : 0);
     for (j = 0; j < 5; j++) { c.save(); c.translate(W / 2, -H * .1); c.rotate(-.9 + j * .45 + M.sin(ts * .4 + j) * .08); gr = c.createLinearGradient(0, 0, 0, H * 1.2); gr.addColorStop(0, 'rgba(255,225,150,' + rb + ')'); gr.addColorStop(1, 'rgba(255,225,150,0)'); c.globalAlpha = 1; c.fillStyle = gr; c.beginPath(); c.moveTo(0, 0); c.lineTo(-H * .11, H * 1.3); c.lineTo(H * .11, H * 1.3); c.fill(); c.restore(); }
     c.globalCompositeOperation = 'source-over';
     if (t < B + 220) {
-      var p = M.min(1, t / 1250); e = e3(p); q = t > B ? (t - B) / 220 : 0; var pre = t > B - 260 && t < B ? (t - (B - 260)) / 260 : 0, k = bs * (.5 + .5 * e + .1 * (t / B) + .12 * pre + .5 * q), cy = H * (.86 - .4 * e) + M.sin(ts * 1.6) * 5;
+      var p = M.min(1, t / 600); e = e3(p); q = t > B ? (t - B) / 220 : 0; var pre = t > B - 150 && t < B ? (t - (B - 150)) / 150 : 0, k = bs * (.5 + .5 * e + .1 * (t / B) + .12 * pre + .5 * q), cy = H * (.86 - .4 * e) + M.sin(ts * 1.6) * 5;
       gr = c.createRadialGradient(W / 2, OY, 0, W / 2, OY, mn * .8); gr.addColorStop(0, 'rgba(240,200,110,' + (.22 + .2 * pre) + ')'); gr.addColorStop(1, 'rgba(240,200,110,0)'); c.globalAlpha = 1; c.fillStyle = gr; c.fillRect(0, 0, W, H);
       c.save(); c.globalAlpha = M.min(1, p * 3) * (1 - q); c.translate(W / 2 + (R() - .5) * tre * 12, cy); c.rotate(M.sin(ts * 1.1) * .025 * (1 - e * .6) + (R() - .5) * tre * .05); c.scale(k, k); c.drawImage(bq, -BW / 2, -BH * .46, BW, BH); c.restore();
     }
     if (t >= B) {
       c.globalCompositeOperation = 'lighter';
-      for (j = 0; j < 3; j++) { q = (tt - j * .11) / .75; if (q > 0 && q < 1) { c.globalAlpha = .6 * (1 - q); c.strokeStyle = '#f3dfae'; c.lineWidth = 1 + 7 * (1 - q); c.beginPath(); c.arc(OX, OY, L * .62 * e3(q), 0, TAU); c.stroke(); } }
-      q = tt / .45; if (q < 1) { c.strokeStyle = '#fff2c8'; for (j = 0; j < 34; j++) { a = j / 34 * TAU + j * .37; c.globalAlpha = .55 * (1 - q); c.lineWidth = 1 + (j % 3); c.beginPath(); c.moveTo(OX + M.cos(a) * L * .06 * e3(q), OY + M.sin(a) * L * .06 * e3(q)); c.lineTo(OX + M.cos(a) * L * (.1 + .5 * e3(q)), OY + M.sin(a) * L * (.1 + .5 * e3(q))); c.stroke(); } }
+      for (j = 0; j < 3; j++) { q = (tt - j * .05) / .4; if (q > 0 && q < 1) { c.globalAlpha = .6 * (1 - q); c.strokeStyle = '#f3dfae'; c.lineWidth = 1 + 7 * (1 - q); c.beginPath(); c.arc(OX, OY, L * .62 * e3(q), 0, TAU); c.stroke(); } }
+      q = tt / .25; if (q < 1) { c.strokeStyle = '#fff2c8'; for (j = 0; j < 34; j++) { a = j / 34 * TAU + j * .37; c.globalAlpha = .55 * (1 - q); c.lineWidth = 1 + (j % 3); c.beginPath(); c.moveTo(OX + M.cos(a) * L * .06 * e3(q), OY + M.sin(a) * L * .06 * e3(q)); c.lineTo(OX + M.cos(a) * L * (.1 + .5 * e3(q)), OY + M.sin(a) * L * (.1 + .5 * e3(q))); c.stroke(); } }
       c.globalCompositeOperation = 'source-over';
-      for (j = 0; j < PT.length; j++) dp(PT[j], tt);
-      for (j = 0; j < SPL.length; j++) { q = SPL[j]; e = (tt - q.t) / 1.2; if (e < 1) { c.globalAlpha = .4 * (1 - e); gr = c.createRadialGradient(q.x, q.y, 0, q.x, q.y, q.z * .65); gr.addColorStop(0, 'rgba(255,240,220,.5)'); gr.addColorStop(.7, 'rgba(255,240,220,.12)'); gr.addColorStop(1, 'rgba(255,240,220,0)'); c.fillStyle = gr; c.fillRect(q.x - q.z, q.y - q.z, q.z * 2, q.z * 2); } }
+      for (j = 0; j < PT.length; j++) dp(PT[j], tp);
+      for (j = 0; j < SPL.length; j++) { q = SPL[j]; e = (tp - q.t) / 1.6; if (e < 1) { c.globalAlpha = .4 * (1 - e); gr = c.createRadialGradient(q.x, q.y, 0, q.x, q.y, q.z * .65); gr.addColorStop(0, 'rgba(255,240,220,.5)'); gr.addColorStop(.7, 'rgba(255,240,220,.12)'); gr.addColorStop(1, 'rgba(255,240,220,0)'); c.fillStyle = gr; c.fillRect(q.x - q.z, q.y - q.z, q.z * 2, q.z * 2); } }
     }
+    if (trauma > .2) { c.globalCompositeOperation = 'screen'; c.globalAlpha = M.min(.4, trauma * .4); c.drawImage(cv, 0, 0, cv.width, cv.height, sn(ts, 70) * 10 * trauma, sn(ts + 5, 66) * 8 * trauma, W, H); c.globalCompositeOperation = 'source-over'; }
     c.globalAlpha = 1; c.drawImage(vgc, 0, 0, W, H);
+    c.globalCompositeOperation = 'overlay'; c.globalAlpha = .09; c.save(); c.translate(-R() * 128, -R() * 128); c.fillStyle = gp; c.fillRect(0, 0, W + 128, H + 128); c.restore(); c.globalCompositeOperation = 'source-over';
     if (flashA > 0) { c.globalAlpha = M.min(1, flashA) * .8; c.fillStyle = '#fff3d6'; c.fillRect(0, 0, W, H); }
     c.globalAlpha = 1; requestAnimationFrame(frame);
   }
   function end() {
     de.classList.remove('sp-lock'); window.scrollTo(0, 0); if (sp.parentNode) sp.parentNode.removeChild(sp);
   }
-  sp.style.cursor = 'pointer'; sp.addEventListener('click', function () { t0 = performance.now() - (D - 350); });
-  if (reduce) { sp.classList.add('go'); c.drawImage(bgc, 0, 0, W, H); c.drawImage(bq, W / 2 - BW * bs / 2, H * .5 - BH * bs * .5, BW * bs, BH * bs); c.drawImage(vgc, 0, 0, W, H); setTimeout(function () { sp.classList.add('out'); }, 1800); setTimeout(end, 2100); }
+  sp.style.cursor = 'pointer'; sp.addEventListener('click', function () { t0 = performance.now() - (D - 300); });
+  if (reduce) { sp.classList.add('go'); c.drawImage(bgc, 0, 0, W, H); c.drawImage(bq, W / 2 - BW * bs / 2, H * .5 - BH * bs * .5, BW * bs, BH * bs); c.drawImage(vgc, 0, 0, W, H); setTimeout(function () { sp.classList.add('out'); }, 900); setTimeout(end, 1200); }
   else requestAnimationFrame(frame);
   window.__spMs = D;
   document.addEventListener('click', function (ev) { var b = ev.target.closest && ev.target.closest('.chips-next'); if (b) { var ch = document.getElementById('chips'); ch.scrollBy({ left: ch.clientWidth * .6, behavior: 'smooth' }); } });
