@@ -2407,7 +2407,7 @@ window.SF_SEED_PRODUCTS = [];
   const SF = window.SF; if (!SF) return;
   const { $, esc, BRL, plainName } = SF, DB = window.SF_DB, PAY = window.SF_PAY || { enabled: false };
   /* gateway futuro: window.SF_PAY = { enabled: true, start({ id, amount, method, name, phone }) -> { checkoutUrl } ou { pixCode } } */
-  const FEE = 20, KEY = 'sf:cart', dlg = $('#order'), inner = $('#order-inner');
+  const FEE = 20, KEY = 'sdf:cart', dlg = $('#order'), inner = $('#order-inner');
   let cart = [], S = { step: 'cart', f: { mode: '', ci: 'Santarém' }, lead: 0 };
   try { cart = JSON.parse(localStorage.getItem(KEY) || '[]').filter((x) => x && x.id); } catch (_) { cart = []; }
   const rpc = (fn, a) => fetch(DB.url + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: DB.key, 'Content-Type': 'application/json' }, body: JSON.stringify(a || {}) })
